@@ -1,5 +1,5 @@
-2À517À-2
-BAP64-02.115
+2À517À-2  75 GHz!  0.15-0.30 pF
+BAP64-02.115 RF attenuators and switches! not detection
 1n60 2-6pF 1ns
 1n34a 1pF
 bat62 0.35pF
