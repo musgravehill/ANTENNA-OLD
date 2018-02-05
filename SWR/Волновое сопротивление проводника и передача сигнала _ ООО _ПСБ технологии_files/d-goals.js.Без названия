@@ -1,0 +1,39 @@
+$(document).ready(function(){
+	$('#callbackBtn').on('click', function(){
+		yaCounter43267969.reachGoal('zvonok');
+		ga('send', 'pageview', '/zvon');
+	});
+	$('#callbackForm .default_button').on('click', function(){
+		yaCounter43267969.reachGoal('zvonok-ok');
+		ga('send', 'pageview', '/zvon-ok');
+	});
+	$('#mc-form[action="/pages/send_question"]').on('submit', function(){
+		yaCounter43267969.reachGoal('question-ok');
+		ga('send', 'pageview', '/quest');
+	});
+	$('form[action="/pages/send_firstorder"]').on('submit', function(){
+		yaCounter43267969.reachGoal('zakaz');
+		ga('send', 'pageview', '/zakaz-ok');
+	});
+	$('a[href^="tel:"]').on('click', function(){
+		yaCounter43267969.reachGoal('tel');
+		ga('send', 'pageview', '/nomber');
+	});
+	$('a[href^="mailto:"]').on('click', function(){
+		yaCounter43267969.reachGoal('pochta');
+		ga('send', 'pageview', '/pismo');
+	});
+	$('#pageCallbackForm input[type="text"]').on('click', function(){
+		var sended = 0;
+		if(!sended){
+			yaCounter43267969.reachGoal('vopros');
+			ga('send', 'pageview', '/otvet');
+			sended = 1;
+		}
+		
+	});	
+	$('#pageCallbackForm .default_button').on('click', function(){
+		yaCounter43267969.reachGoal('vopros-ok');
+		ga('send', 'pageview', '/otvet-ok');
+	});
+});

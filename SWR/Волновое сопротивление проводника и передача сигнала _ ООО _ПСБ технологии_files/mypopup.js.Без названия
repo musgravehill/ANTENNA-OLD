@@ -1,0 +1,1 @@
+function gup(url){var w=500;var h=500;var WName='bigphoto';var mtw=(screen.width-w)/2;var mth=(screen.availHeight-h)/2;window.open(url,WName,"width=500 height=500 top="+mth+",left="+mtw+",status=no,toolbar=no,scrollbars=no,resizable=no,menubar=no");}
