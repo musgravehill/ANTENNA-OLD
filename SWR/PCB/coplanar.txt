@@ -5,5 +5,7 @@
 Ïמכמסךא 2.1לל ס חאחמנאלט 0.5לל האוע Zo 50 Îל
 1.85לל   חאחמנ=0.36לל
 
+ÍÎ! ØÈÐÈÍÀ ÇÅÌËÈ ÑÁÎÊÎÂ ÄÎËÆÍÀ ÁÛÒÜ ÌÈÍÈÌÓÌ Â 5 ÐÀÇ ÁÎËÜØÅ, ×ÅÌ ØÈÐÈÍÀ ÏÎËÎÑÊÈ. À Ó ÌÅÍ‗ ÎÄÍÀ ÈÇ ÑÒÎÐÎÍ - ÓÇÊÀ‗.
+
 Coplanar Waveguide With Ground Characteristic Impedance Calculator
 http://chemandy.com/calculators/coplanar-waveguide-with-ground-calculator.htm

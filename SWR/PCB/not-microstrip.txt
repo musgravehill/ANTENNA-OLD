@@ -1,5 +1,0 @@
-диэл проницаемость FR4 на СВЧ 4.45
-толщина фольги обычно 0.035мм 35мкм
-https://www.pasternack.com/t-calculator-microstrip.aspx
-
-ширина полоски 3.00мм дает Zo = 49.23 Ом
