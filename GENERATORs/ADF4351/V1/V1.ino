@@ -53,7 +53,7 @@ long ADF4351_referenceFreq = 2500000; //reference frequency = quartz 25 MHz
 long ADF4351_freqStep = 625; //step 6.25 Khz
 long Step[5]; //step memory
 int StepNum = 0;
-unsigned long Reg[6]; //ADF4351 Registers, see datasheet
+unsigned long ADF4351_registers[6]; //ADF4351 Registers, see datasheet
 
 byte tenHz, hundredHz, ones, tens, hundreds, thousands, tenthousands, hundredthousands, millions;
 
@@ -73,35 +73,10 @@ void setup() {
   Step[3] = 2500; // 25 khz
   Step[4] = 100000; // 1 Mhz Step
 
-  SetFreq(ADF4351_frequency);
+  ADF4351_setFreq(ADF4351_frequency);
 }
 
-void loop() {
-
-
-  //case btnRIGHT:
-  long FreqHi;
-  if (ADF4351_freqStep == 100000) {
-    FreqHi = ADF4351_frequency + 10000000; // +100Mhz
-  }
-  else        {
-    FreqHi = ADF4351_frequency + 500000; // +5Mhz};
-  }
-  while (ADF4351_frequency < FreqHi) {
-    ADF4351_frequency += ADF4351_freqStep;
-    SetFreq(ADF4351_frequency);
-  }
-
-  if (ADF4351_freqStep == 100000)        {
-    FreqHi = FreqHi - 10000000; // -100Mhz
-  }
-  else        {
-    FreqHi = FreqHi - 500000; // -5Mhz};
-  }
-  while (FreqHi < ADF4351_frequency) {
-    ADF4351_frequency -= ADF4351_freqStep;
-    SetFreq(ADF4351_frequency);
-  }
+void loop() {  
 
   //case btnLEFT:
   StepNum += 1;
@@ -111,41 +86,41 @@ void loop() {
 
   // case btnUP:
   ADF4351_frequency += ADF4351_freqStep;
-  SetFreq(ADF4351_frequency);
+  ADF4351_setFreq(ADF4351_frequency);
 
 
   //case btnDOWN:
   ADF4351_frequency -= ADF4351_freqStep;
-  SetFreq(ADF4351_frequency);
-
+  ADF4351_setFreq(ADF4351_frequency);
+  
 }
 
 
 
-void SetFreq(long ADF4351_frequency) {
+void ADF4351_setFreq(long ADF4351_frequency) {
 
-  ConvertFreq(ADF4351_frequency, Reg);
-  WriteADF2(5);
+  ADF4351_convertFreq(ADF4351_frequency, ADF4351_registers);
+  ADF4351_writeToRegister(5);
   delayMicroseconds(2500);
-  WriteADF2(4);
+  ADF4351_writeToRegister(4);
   delayMicroseconds(2500);
-  WriteADF2(3);
+  ADF4351_writeToRegister(3);
   delayMicroseconds(2500);
-  WriteADF2(2);
+  ADF4351_writeToRegister(2);
   delayMicroseconds(2500);
-  WriteADF2(1);
+  ADF4351_writeToRegister(1);
   delayMicroseconds(2500);
-  WriteADF2(0);
+  ADF4351_writeToRegister(0);
   delayMicroseconds(2500);
 }
-void WriteADF2(int idx)
+void ADF4351_writeToRegister(int idx)
 { // make 4 byte from integer for SPI-Transfer
   byte buf[4];
   for (int i = 0; i < 4; i++)
-    buf[i] = (byte)(Reg[idx] >> (i * 8));
-  WriteADF(buf[3], buf[2], buf[1], buf[0]);
+    buf[i] = (byte)(ADF4351_registers[idx] >> (i * 8));
+  ADF4351_writeData(buf[3], buf[2], buf[1], buf[0]);
 }
-int WriteADF(byte a1, byte a2, byte a3, byte a4) {
+int ADF4351_writeData(byte a1, byte a2, byte a3, byte a4) {
   // write over SPI to ADF4351
   digitalWrite(slaveSelectPin, LOW);
   delayMicroseconds(10);
@@ -161,7 +136,7 @@ int ADF4351_ss_toggle() {
   digitalWrite(slaveSelectPin, LOW);
 }
 
-void ConvertFreq(long freq, unsigned long R[])
+void ADF4351_convertFreq(long freq, unsigned long R[])
 {
   // PLL-Reg-R0         =  32bit
   // Registerselect        3bit
@@ -299,26 +274,25 @@ void showFreq(long FREQ) {
   ones = ((FREQ / 100) % 10);
   hundredHz = ((FREQ / 10) % 10);
   tenHz = ((FREQ) % 10);
-  lcd.setCursor(0, 1);
-  lcd.print("            ");
+
   if (millions > 0) {
-    lcd.setCursor(0, 1);
-    lcd.print(millions);
-    lcd.print(".");
+    //lcd.setCursor(0, 1);
+    //lcd.print(millions);
+    //lcd.print(".");
   }
   else {
-    lcd.setCursor(2, 1);
+    //lcd.setCursor(2, 1);
   }
-  lcd.print(hundredthousands);
-  lcd.print(tenthousands);
-  lcd.print(thousands);
-  lcd.print(",");
-  lcd.print(hundreds);
-  lcd.print(tens);
-  lcd.print(ones);
-  lcd.print(".");
-  lcd.print(hundredHz);
-  lcd.print(tenHz);
+  // lcd.print(hundredthousands);
+  //lcd.print(tenthousands);
+  //lcd.print(thousands);
+  //lcd.print(",");
+  //lcd.print(hundreds);
+  // lcd.print(tens);
+  //lcd.print(ones);
+  //lcd.print(".");
+  // lcd.print(hundredHz);
+  //lcd.print(tenHz);
 };
 
 // as PLL-Register Referenz
