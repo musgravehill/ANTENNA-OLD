@@ -1,98 +1,79 @@
-//
-//*****************************************************************
+
+//============================================   3.3V ONLY ===================================================================================================================
+//============================================   3.3V ONLY ===================================================================================================================
+//============================================   3.3V ONLY ===================================================================================================================
+//============================================   3.3V ONLY ===================================================================================================================
+
 // ADF4351 PLL-Synthesizer 33Mhz - 4,4Ghz
 // Integer mode Demo OE6OCG 1/2015
-// Hardware Arduino Uno mit Adafruit Keyb-LCD Shield 16x2 ~ 10USD
-// ADF4351 PLL-VCO Board assembled from Ebay or China ~ 40 USD
-//
-// Buttoms:
 // up/down = Freq +- with stepsize
 // left = frequency step's from 6.25khz to 1Mhz
-// right = scan with stepsize
-// select = predefined startfrequencies from 34Mhz to 4.4 Ghz
-//
-// IDE: Arduino 1.5.4 or up without spec. Library
-// License: Free or a gift to Paypal oe6ocg@aon.at
-//*****************************************************************
-/*                                               Hardware connection Uno to PLL-Board (3.3V logic)
-                                  +-----+
-     +----[PWR]-------------------| USB |--+
-     |                            +-----+  |                        output: 33Mhz - 4.4Ghz ~ 3 dbm
-     |         GND/RST2  [ ][ ]            |             PLL-Board + Arduino with Display Bk.light draw 200mA on 5V USB
-     |       MOSI2/SCK2  [ ][ ]  A5/SCL[ ] |                                       #
-     |          5V/MISO2 [ ][ ]  A4/SDA[ ] |    |---|_3.3k_|-----\                 |
-     |                             AREF[ ] |    !---|_3.3k_|---\ |            _____|______
-     |                              GND[ ] |----!---|_3.3k_|-| | |           |            |
-     | [ ]N/C                    SCK/13[ ] |------|_1.5k_|---!-|-|----Clock--|ADF4351     |
-     | [ ]v.ref                 MISO/12[ ] |                   | |           |PLL Board   |
-     | [ ]RST                   MOSI/11[ ]~|------|_1.5k_|-----!-|----Data---|3.3V logic  |
-     | [ ]3V3    +---+               10[ ]~|                     |           |            |
-     | [ ]5v     | A |                9[ ]~|   LCD               !----LE-----|            |
-     | [ ]GND   -| R |-               8[ ] |   LCD               |           |____________|
-     | [ ]GND   -| D |-                    |                     |
-     | [ ]Vin   -| U |-               7[ ] |   LCD               |
-     |          -| I |-               6[ ]~|   LCD               |
-  Keyb | [ ]A0    -| N |-               5[ ]~|   LCD               |
-  RSSI | [ ]A1    -| O |-               4[ ] |   LCD               |
-     | [ ]A2     +---+           INT1/3[ ]~|------|_1.5k_|---LE--/
-     | [ ]A3                     INT0/2[ ] |
-     | [ ]A4/SDA  RST SCK MISO     TX>1[ ] |
-     | [ ]A5/SCL  [ ] [ ] [ ]      RX<0[ ] |
-     |            [ ] [ ] [ ]              |
-     |  UNO       GND MOSI 5V  ____________/
-      \_______________________/
+/*
+         ============================================   3.3V ONLY ===================================================================================================================
+         ============================================   3.3V ONLY ===================================================================================================================
+         ============================================   3.3V ONLY ===================================================================================================================
+         ============================================   3.3V ONLY ===================================================================================================================
+         ============================================   3.3V ONLY ===================================================================================================================
+         ============================================   3.3V ONLY ===================================================================================================================
+   MOSI 11 ----> DATA
+   MISO 12 ---- null, but d12 is SPI
+   SCK 13 -----> CLK
+   d3----------> LE
+    
+    TODO 
+   int LoNoisSpur = 1; //Low Spurious Mode
+    int D_out_PWR = 11; //POut +5db
 
 */
 
 #include <SPI.h>
 
-const int slaveSelectPin = 3;  //SPI-SS enable ADF4351
-
+#define ADF4351_ss_pin 3 //SPI-SS enable ADF4351
 long ADF4351_frequency = 44220000;
 long ADF4351_referenceFreq = 2500000; //reference frequency = quartz 25 MHz
-long ADF4351_freqStep = 625; //step 6.25 Khz
-long Step[5]; //step memory
-int StepNum = 0;
+long ADF4351_freqStepCurrent = 625; //step 6.25 Khz
+long ADF4351_stepsVariants[5]; //step`s variants
+int ADF4351_stepsVariantsNumCurrent = 0;
 unsigned long ADF4351_registers[6]; //ADF4351 Registers, see datasheet
 
 byte tenHz, hundredHz, ones, tens, hundreds, thousands, tenthousands, hundredthousands, millions;
 
 
 void setup() {
-  pinMode (slaveSelectPin, OUTPUT);
-  digitalWrite(slaveSelectPin, LOW);
+  pinMode (ADF4351_ss_pin, OUTPUT);
+  digitalWrite(ADF4351_ss_pin, LOW);
   SPI.setDataMode(SPI_MODE0);
   SPI.setBitOrder(MSBFIRST);
   SPI.setClockDivider(SPI_CLOCK_DIV128);
   SPI.begin();
   delay(500);
 
-  Step[0] = 625; // 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
-  Step[1] = 1000; // 10 khz
-  Step[2] = 1250; // 12.5 khz
-  Step[3] = 2500; // 25 khz
-  Step[4] = 100000; // 1 Mhz Step
+  ADF4351_stepsVariants[0] = 625; // 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
+  ADF4351_stepsVariants[1] = 1000; // 10 khz
+  ADF4351_stepsVariants[2] = 1250; // 12.5 khz
+  ADF4351_stepsVariants[3] = 2500; // 25 khz
+  ADF4351_stepsVariants[4] = 100000; // 1 Mhz ADF4351_stepsVariants
 
   ADF4351_setFreq(ADF4351_frequency);
 }
 
-void loop() {  
+void loop() {
 
   //case btnLEFT:
-  StepNum += 1;
-  if (StepNum > 4) StepNum = 0;
-  ADF4351_freqStep = Step[StepNum];
+  ADF4351_stepsVariantsNumCurrent += 1;
+  if (ADF4351_stepsVariantsNumCurrent > 4) ADF4351_stepsVariantsNumCurrent = 0;
+  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
 
 
   // case btnUP:
-  ADF4351_frequency += ADF4351_freqStep;
+  ADF4351_frequency += ADF4351_freqStepCurrent;
   ADF4351_setFreq(ADF4351_frequency);
 
 
   //case btnDOWN:
-  ADF4351_frequency -= ADF4351_freqStep;
+  ADF4351_frequency -= ADF4351_freqStepCurrent;
   ADF4351_setFreq(ADF4351_frequency);
-  
+
 }
 
 
@@ -122,7 +103,7 @@ void ADF4351_writeToRegister(int idx)
 }
 int ADF4351_writeData(byte a1, byte a2, byte a3, byte a4) {
   // write over SPI to ADF4351
-  digitalWrite(slaveSelectPin, LOW);
+  digitalWrite(ADF4351_ss_pin, LOW);
   delayMicroseconds(10);
   SPI.transfer(a1);
   SPI.transfer(a2);
@@ -131,9 +112,9 @@ int ADF4351_writeData(byte a1, byte a2, byte a3, byte a4) {
   ADF4351_ss_toggle();
 }
 int ADF4351_ss_toggle() {
-  digitalWrite(slaveSelectPin, HIGH);
+  digitalWrite(ADF4351_ss_pin, HIGH);
   delayMicroseconds(5);
-  digitalWrite(slaveSelectPin, LOW);
+  digitalWrite(ADF4351_ss_pin, LOW);
 }
 
 void ADF4351_convertFreq(long freq, unsigned long R[])
@@ -251,7 +232,7 @@ void ADF4351_convertFreq(long freq, unsigned long R[])
   float PFDFreq = ADF4351_referenceFreq * ((1.0 + RD2refdoubl) / (R_Counter * (1.0 + RD1_Rdiv2))); //Referenzfrequenz
   float N = ((RFout) * outdiv) / PFDFreq;
   int N_Int = N;
-  long M_Mod = PFDFreq * (100000 / ADF4351_freqStep) / 100000;
+  long M_Mod = PFDFreq * (100000 / ADF4351_freqStepCurrent) / 100000;
   int F_Frac = round((N - N_Int) * M_Mod);
 
   R[0] = (unsigned long)(0 + F_Frac * pow(2, 3) + N_Int * pow(2, 15));
