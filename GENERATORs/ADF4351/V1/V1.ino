@@ -24,14 +24,18 @@
    int LoNoisSpur = 1; //Low Spurious Mode
     int D_out_PWR = 11; //POut +5db
 
+    ENCODER add
+    if Freq>4.4GHz stop ++
+    if Freq < 35Mhz stop --
+
 */
 
 #include <SPI.h>
 
 #define ADF4351_ss_pin 3 //SPI-SS enable ADF4351
-long ADF4351_frequency = 44220000;
-long ADF4351_referenceFreq = 2500000; //reference frequency = quartz 25 MHz
-long ADF4351_freqStepCurrent = 625; //step 6.25 Khz
+long ADF4351_frequency = 44220000; // *10 Hz                        
+long ADF4351_referenceFreq = 2500000; //*10 Hz reference frequency = quartz 25 MHz
+long ADF4351_freqStepCurrent = 625; //*10 Hz step 6.25 Khz
 long ADF4351_stepsVariants[5]; //step`s variants
 int ADF4351_stepsVariantsNumCurrent = 0;
 unsigned long ADF4351_registers[6]; //ADF4351 Registers, see datasheet
@@ -48,11 +52,11 @@ void setup() {
   SPI.begin();
   delay(500);
 
-  ADF4351_stepsVariants[0] = 625; // 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
-  ADF4351_stepsVariants[1] = 1000; // 10 khz
-  ADF4351_stepsVariants[2] = 1250; // 12.5 khz
-  ADF4351_stepsVariants[3] = 2500; // 25 khz
-  ADF4351_stepsVariants[4] = 100000; // 1 Mhz ADF4351_stepsVariants
+  ADF4351_stepsVariants[0] = 625; //*10 Hz 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
+  ADF4351_stepsVariants[1] = 1000; //*10 Hz 10 khz
+  ADF4351_stepsVariants[2] = 1250; //*10 Hz 12.5 khz
+  ADF4351_stepsVariants[3] = 2500; //*10 Hz 25 khz
+  ADF4351_stepsVariants[4] = 100000; //*10 Hz 1 Mhz ADF4351_stepsVariants
 
   ADF4351_setFreq(ADF4351_frequency);
 }
