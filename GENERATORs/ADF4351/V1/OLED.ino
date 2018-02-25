@@ -20,7 +20,7 @@ void OLED_display() {
 
   myOLED.setFont(MediumNumbers);
   float frq = ADF4351_frequency / 100000.0; // 1 000 00 (*10hz)
-  myOLED.printNumF(frq, 6, 0, 0);
+  myOLED.printNumF(frq, 5, 0, 0);
 
   float fstep = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent] / 100.0; //100*10Hz
   myOLED.printNumF(fstep, 2, 36, 18);

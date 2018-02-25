@@ -7,11 +7,8 @@ void ADF4351_init() {
   SPI.begin();
   delay(500);
 
-  ADF4351_stepsVariants[0] = 625; //*10Hz 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
-  ADF4351_stepsVariants[1] = 1000; //*10Hz 10 khz
-  ADF4351_stepsVariants[2] = 1250; //*10Hz 12.5 khz
-  ADF4351_stepsVariants[3] = 2500; //*10Hz 25 khz
-  ADF4351_stepsVariants[4] = 100000; //*10Hz 1 Mhz ADF4351_stepsVariants
+  ADF4351_frequency = 243300000L; //*10 Hz = 433 MHz 
+  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
 
   ADF4351_setFreq(ADF4351_frequency);
 }
