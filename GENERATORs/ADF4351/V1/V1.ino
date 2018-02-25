@@ -72,7 +72,7 @@ boolean ENCODER_B_state;
 boolean ENCODER_A_state_prev = false;
 
 #define BTN_step A0
-#define BTN_out_power A1 //TODO
+#define BTN_out_power A1 
 #define BTN_lownoisespur A2
 
 uint32_t INTERFACE_action_prev_ms = 0L;

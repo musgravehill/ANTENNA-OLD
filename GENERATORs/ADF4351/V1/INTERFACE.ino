@@ -29,7 +29,7 @@ void BUTTON_check() {
   }
 
   //BTN output rf power
-  button_state = digitalRead(BTN_lownoisespur);
+  button_state = digitalRead(BTN_out_power);
   if (!button_state) {
     uint32_t  currMillis = millis();
     if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
