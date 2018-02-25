@@ -8,6 +8,15 @@ void ADF4351_init() {
   delay(900);
   ADF4351_setConfig();
 }
+
+void ADF4351_out_power_next() {
+  ADF4351_outputPower_current += 1;
+  if (ADF4351_outputPower_current > 3) {  //cycle, return to 0-pos
+    ADF4351_outputPower_current = 0;
+  }
+  ADF4351_isNeedSetNewConfig = true;  
+}
+
 void ADF4351_lowNoiseSpurMode_next() {
   ADF4351_lowNoiseOrSpur_current += 1;
   if (ADF4351_lowNoiseOrSpur_current > 1) {  //cycle, return to 0-pos
@@ -145,7 +154,7 @@ void ADF4351_prepareConfig() {
 
   // PLL-Reg-R4         =  32bit
   // Registerselect        3bit
-  int D_out_PWR = 0 ;    // 2bit
+  int D_out_PWR = ADF4351_outputPowerVariants[ADF4351_outputPower_current] ;    // 2bit
   int D_RF_ena = 1;     // 1bit
   int D_auxOutPwr = 0;  // 2bit
   int D_auxOutEna = 0;  // 1bit

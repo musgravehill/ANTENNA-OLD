@@ -29,6 +29,15 @@ void BUTTON_check() {
   }
 
   //BTN output rf power
+  button_state = digitalRead(BTN_lownoisespur);
+  if (!button_state) {
+    uint32_t  currMillis = millis();
+    if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
+      INTERFACE_action_prev_ms = currMillis;
+      ADF4351_out_power_next();
+    }
+  }
+
 }
 
 void ENCODER_init() {

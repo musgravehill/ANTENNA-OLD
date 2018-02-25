@@ -31,8 +31,7 @@ void OLED_display() {
 
   myOLED.print(OLED_stepsVariants_val[ADF4351_stepsVariantsNumCurrent], 36, 18);
 
-  int8_t fpower = -3;
-  myOLED.printNumI(fpower, 36, 36);
+  myOLED.print(ADF4351_outputPower_verb[ADF4351_outputPower_current], 36, 36);
 
   myOLED.update();
 }

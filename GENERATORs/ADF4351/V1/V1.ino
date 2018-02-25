@@ -35,8 +35,8 @@
 #include <SPI.h>
 #define ADF4351_ss_pin 3 //SPI-SS enable ADF4351
 uint32_t ADF4351_referenceFreq = 2500000; //*10 Hz reference frequency = quartz 25 MHz
-uint32_t ADF4351_frequency= 43392000L; //*10 Hz = 433 MHz 
-uint32_t ADF4351_freqStepCurrent=0;
+uint32_t ADF4351_frequency = 43392000L; //*10 Hz = 433 MHz
+uint32_t ADF4351_freqStepCurrent = 0;
 uint32_t ADF4351_stepsVariants[7] = {
   625, //*10Hz 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
   1000, //*10Hz 10 khz
@@ -49,9 +49,13 @@ uint32_t ADF4351_stepsVariants[7] = {
 String OLED_stepsVariants_val[7] = {"6.25", "10", "12.5", "25", "1", "10", "100"};
 String OLED_stepsVariants_kmhz[7] = {"kHz", "kHz", "kHz", "kHz", "MHz", "MHz", "MHz"};
 
-byte ADF4351_lowNoiseOrSpurVariants[2] = {B0, B11};  
+byte ADF4351_lowNoiseOrSpurVariants[2] = {B0, B11};
 uint8_t ADF4351_lowNoiseOrSpur_current = 0;
 String ADF4351_lowNoiseOrSpur_verb[2] = {"LOW NOISE MODE", "LOW SPUR MODE"};
+
+byte ADF4351_outputPowerVariants[4] = {B0, B01, B10, B11};
+uint8_t ADF4351_outputPower_current = 0;
+String ADF4351_outputPower_verb[4] = {"-4", "-1", "+2", "+5"};
 
 int ADF4351_stepsVariantsNumCurrent = 0;
 unsigned long ADF4351_registers[6]; //ADF4351 Registers, see datasheet
