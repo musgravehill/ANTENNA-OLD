@@ -1,7 +1,21 @@
-void BUTTON_check() {
-  //int8_t btnState1, btnState2;
-  //btnState1 = digitalRead(BUTTON_udo_push);
 
+void BUTTON_init() {
+  pinMode(BTN_step, INPUT_PULLUP);
+
+}
+void BUTTON_check() {
+  boolean button_state = digitalRead(BTN_step);
+  if (!button_state) {
+    uint32_t  currMillis = millis();
+    if ((currMillis - ADF4351_changeConfig_prev_ms) > 1111L) {
+      ADF4351_changeConfig_prev_ms = currMillis;
+      ADF4351_stepsVariantsNumCurrent += 1;
+      if (ADF4351_stepsVariantsNumCurrent > 6) {
+        ADF4351_stepsVariantsNumCurrent = 0;
+      }
+      ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
+    }
+  }
 }
 
 void ENCODER_init() {
@@ -9,8 +23,8 @@ void ENCODER_init() {
   pinMode(ENCODER_A, INPUT_PULLUP);
   pinMode(ENCODER_B, INPUT_PULLUP);
 }
-void ENCODER_check() {
 
+void ENCODER_check() {
   boolean ENCODER_button_state = digitalRead(ENCODER_button);
   if (!ENCODER_button_state) {
     uint32_t  currMillis = millis();

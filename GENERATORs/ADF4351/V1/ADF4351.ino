@@ -13,15 +13,13 @@ void ADF4351_init() {
   ADF4351_setFreq();
 }
 
-void ADF4351_freq_inc() {
-  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
+void ADF4351_freq_inc() {  
   ADF4351_frequency += ADF4351_freqStepCurrent;
   ADF4351_isNeedSetNewFreq = true;
   //ADF4351_setFreq(ADF4351_frequency); - устанаваливать частоту не каждый сдвиг энкодера, а после завершения вращения НА НАЖАТИЕ ЭНКОДЕРА
 }
 
-void ADF4351_freq_dec() {
-  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
+void ADF4351_freq_dec() {  
   ADF4351_frequency -= ADF4351_freqStepCurrent;
   ADF4351_isNeedSetNewFreq = true;
   //ADF4351_setFreq(ADF4351_frequency);- устанаваливать частоту не каждый сдвиг энкодера, а после завершения вращения НА НАЖАТИЕ ЭНКОДЕРА
