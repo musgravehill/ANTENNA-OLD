@@ -15,10 +15,9 @@ void OLED_display() {
   myOLED.print("LOW NOISE", 0, 56);
   if (ADF4351_isNeedSetNewFreq) {
     if (OLED_blynk_state) {
-      myOLED.print("*", 122, 6);
+      myOLED.print("*", 122, 5);
       OLED_blynk_state = false;
     } else {
-      //myOLED.print(" ", 122, 6);
       OLED_blynk_state = true;
     }
 

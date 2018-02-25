@@ -4,9 +4,9 @@ void TIMEMACHINE_loop() {
     TIMEMACHINE_3ms();
     TIMEMACHINE_prev_3ms = TIMEMACHINE_currMillis;
   }
-  if ((TIMEMACHINE_currMillis - TIMEMACHINE_prev_211ms) > 211L) {
-    TIMEMACHINE_211ms();
-    TIMEMACHINE_prev_211ms = TIMEMACHINE_currMillis;
+  if ((TIMEMACHINE_currMillis - TIMEMACHINE_prev_311ms) > 211L) {
+    TIMEMACHINE_311ms();
+    TIMEMACHINE_prev_311ms = TIMEMACHINE_currMillis;
   }
   if ((TIMEMACHINE_currMillis - TIMEMACHINE_prev_1103ms) > 4444L) {
     TIMEMACHINE_1103ms();
@@ -18,7 +18,7 @@ void TIMEMACHINE_3ms() {
   ENCODER_check();
 }
 
-void TIMEMACHINE_211ms() {
+void TIMEMACHINE_311ms() {
   OLED_display();
 }
 

@@ -74,7 +74,7 @@ boolean OLED_blynk_state = false;
 
 //================================== TIMEMACHINE =================================================================
 uint32_t TIMEMACHINE_prev_3ms = 0L;
-uint32_t TIMEMACHINE_prev_211ms = 0L;
+uint32_t TIMEMACHINE_prev_311ms = 0L;
 uint32_t TIMEMACHINE_prev_1103ms = 0L;
 
 
