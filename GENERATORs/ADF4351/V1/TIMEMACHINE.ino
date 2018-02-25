@@ -4,14 +4,11 @@ void TIMEMACHINE_loop() {
     TIMEMACHINE_3ms();
     TIMEMACHINE_prev_3ms = TIMEMACHINE_currMillis;
   }
-  if ((TIMEMACHINE_currMillis - TIMEMACHINE_prev_311ms) > 211L) {
+  if ((TIMEMACHINE_currMillis - TIMEMACHINE_prev_311ms) > 311L) {
     TIMEMACHINE_311ms();
     TIMEMACHINE_prev_311ms = TIMEMACHINE_currMillis;
   }
-  if ((TIMEMACHINE_currMillis - TIMEMACHINE_prev_1103ms) > 4444L) {
-    TIMEMACHINE_1103ms();
-    TIMEMACHINE_prev_1103ms = TIMEMACHINE_currMillis;
-  }
+  
 }
 
 void TIMEMACHINE_3ms() {
@@ -23,5 +20,3 @@ void TIMEMACHINE_311ms() {
   OLED_display();
 }
 
-void TIMEMACHINE_1103ms() {
-}

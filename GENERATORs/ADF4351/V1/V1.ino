@@ -62,7 +62,9 @@ boolean ENCODER_A_state;
 boolean ENCODER_B_state;
 boolean ENCODER_A_state_prev = false;
 
-#define BTN_step A0  //TODO analog read
+#define BTN_step A0
+#define BTN_out_power A1 //TODO
+#define BTN_lownoisespur A2 //TODO
 
 
 
@@ -77,7 +79,6 @@ boolean OLED_blynk_state = false;
 //================================== TIMEMACHINE =================================================================
 uint32_t TIMEMACHINE_prev_3ms = 0L;
 uint32_t TIMEMACHINE_prev_311ms = 0L;
-uint32_t TIMEMACHINE_prev_1103ms = 0L;
 
 
 void setup() {
