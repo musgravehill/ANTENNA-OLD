@@ -21,6 +21,7 @@ void ADF4351_step_next() {
   if (ADF4351_stepsVariantsNumCurrent > 6) {  //cycle, return to 0-pos
     ADF4351_stepsVariantsNumCurrent = 0;
   }
+  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent]; //it is in ADF4351_convertFreq()
   ADF4351_isNeedSetNewConfig = true;
 }
 
@@ -36,13 +37,18 @@ void ADF4351_freq_dec() {
 
 
 void ADF4351_setConfig() {
-   Serial.println(ADF4351_registers[2],HEX);
-
-  
   uint32_t  currMillis = millis();
   if ((currMillis - ADF4351_changeConfig_prev_ms) > 1111L) {
     ADF4351_changeConfig_prev_ms = currMillis;
     Serial.println("SEND CONFIG");
+
+    for (byte i = 0; i < 6; i++) {
+      Serial.print("REG");
+      Serial.print(i, DEC);
+      Serial.print(" ");
+      Serial.println(ADF4351_registers[i], HEX);
+    }
+
     ADF4351_isNeedSetNewConfig = false;
 
     ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent]; //it is in ADF4351_convertFreq()
