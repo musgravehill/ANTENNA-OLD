@@ -7,7 +7,7 @@ void ADF4351_init() {
   SPI.begin();
   delay(500);
 
-  ADF4351_frequency = 243300000L; //*10 Hz = 433 MHz 
+  ADF4351_frequency = 43300000L; //*10 Hz = 433 MHz 
   ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
 
   ADF4351_setFreq(ADF4351_frequency);

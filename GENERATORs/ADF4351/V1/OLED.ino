@@ -19,8 +19,12 @@ void OLED_display() {
   myOLED.print("LOW NOISE", 0, 56);
 
   myOLED.setFont(MediumNumbers);
-  float frq = ADF4351_frequency / 100000.0; // 1 000 00 (*10hz)
-  myOLED.printNumF(frq, 5, 0, 0);
+  long f_m = (long)ADF4351_frequency / (long)100000; //*10Hz
+  long f_k =  (ADF4351_frequency % 100000); //*10Hz
+  myOLED.printNumI(f_m, 0, 0, 4, '0');
+  myOLED.printNumI(f_k, 60, 0, 5, '0');
+  myOLED.print(".", 47, 0);
+
 
   float fstep = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent] / 100.0; //100*10Hz
   myOLED.printNumF(fstep, 2, 36, 18);
