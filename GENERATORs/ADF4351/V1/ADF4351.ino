@@ -179,42 +179,63 @@ void ADF4351_prepareConfig() {
 
   long RFout = ADF4351_frequency;   // VCO-Frequenz
   // calc bandselect und RF-div
-  int outdiv = 1;
+  int outdiv = 0;
 
   if (RFout >= 220000000) {
     outdiv = 1;
-    D_RfDivSel = 0;
+    D_RfDivSel = B0;
   }
   if (RFout < 220000000) {
     outdiv = 2;
-    D_RfDivSel = 1;
+    D_RfDivSel = B001;
   }
   if (RFout < 110000000) {
     outdiv = 4;
-    D_RfDivSel = 2;
+    D_RfDivSel = B010;
   }
   if (RFout < 55000000) {
     outdiv = 8;
-    D_RfDivSel = 3;
+    D_RfDivSel = B011;
   }
   if (RFout < 27500000) {
     outdiv = 16;
-    D_RfDivSel = 4;
+    D_RfDivSel = B100;
   }
   if (RFout < 13800000) {
     outdiv = 32;
-    D_RfDivSel = 5;
+    D_RfDivSel = B101;
   }
   if (RFout < 6900000) {
     outdiv = 64;
-    D_RfDivSel = 6;
+    D_RfDivSel = B110;
   }
 
-  float PFDFreq = ADF4351_referenceFreq * ((1.0 + RD2refdoubl) / (R_Counter * (1.0 + RD1_Rdiv2))); //Referenzfrequenz
+  float PFDFreq = ADF4351_referenceFreq * ((1.0 + RD2refdoubl) / (R_Counter * (1.0 + RD1_Rdiv2))); //Referenzfrequenz *10 (все частоту сокращена в 10раз почему-то)
   float N = ((RFout) * outdiv) / PFDFreq;
   int N_Int = N;
   long M_Mod = PFDFreq * (100000 / ADF4351_freqStepCurrent) / 100000;
   int F_Frac = round((N - N_Int) * M_Mod);
+
+  Serial.print("\r\n PFDFreq=");
+  Serial.println(PFDFreq, DEC);
+
+  Serial.print("\r\n N_Int=");
+  Serial.println(N_Int, DEC);
+
+  Serial.print("\r\n M_Mod=");
+  Serial.println(M_Mod, DEC);
+
+  Serial.print("\r\n F_Frac=");
+  Serial.println(F_Frac, DEC);
+
+  Serial.print("\r\n outdiv=");
+  Serial.println(outdiv, DEC);
+
+  Serial.print("\r\n D_RfDivSel=");
+  Serial.println(D_RfDivSel, BIN);
+
+
+
 
   ADF4351_registers[0] = (unsigned long)(0 + F_Frac * pow(2, 3) + N_Int * pow(2, 15));
   ADF4351_registers[1] = (unsigned long)(1 + M_Mod * pow(2, 3) + P_Phase * pow(2, 15) + Prescal * pow(2, 27) + PhaseAdj * pow(2, 28));
