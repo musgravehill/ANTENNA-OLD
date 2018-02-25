@@ -21,7 +21,7 @@ void ADF4351_step_next() {
   if (ADF4351_stepsVariantsNumCurrent > 6) {  //cycle, return to 0-pos
     ADF4351_stepsVariantsNumCurrent = 0;
   }
-  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent]; //it is in ADF4351_convertFreq()
+  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent]; //it is in ADF4351_prepareConfig()
   ADF4351_isNeedSetNewConfig = true;
 }
 
@@ -40,20 +40,12 @@ void ADF4351_setConfig() {
   uint32_t  currMillis = millis();
   if ((currMillis - ADF4351_changeConfig_prev_ms) > 1111L) {
     ADF4351_changeConfig_prev_ms = currMillis;
-    Serial.println("SEND CONFIG");
-
-    for (byte i = 0; i < 6; i++) {
-      Serial.print("REG");
-      Serial.print(i, DEC);
-      Serial.print(" ");
-      Serial.println(ADF4351_registers[i], HEX);
-    }
 
     ADF4351_isNeedSetNewConfig = false;
 
-    ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent]; //it is in ADF4351_convertFreq()
+    ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent]; //it is in ADF4351_prepareConfig()
 
-    ADF4351_convertFreq(ADF4351_frequency, ADF4351_registers);
+    ADF4351_prepareConfig();
     ADF4351_writeToRegister(5);
     delayMicroseconds(2500);
     ADF4351_writeToRegister(4);
@@ -66,6 +58,21 @@ void ADF4351_setConfig() {
     delayMicroseconds(2500);
     ADF4351_writeToRegister(0);
     delayMicroseconds(2500);
+
+    //////DBG
+    Serial.println("\r\n SEND CONFIG \r\n");
+    for (byte i = 0; i < 6; i++) {
+      Serial.print("REG");
+      Serial.print(i, DEC);
+      Serial.print(" ");
+      Serial.println(ADF4351_registers[i], HEX);
+    }
+    Serial.print("\r\n ADF4351_freqStepCurrent=");
+    Serial.println(ADF4351_freqStepCurrent, DEC);
+    ///////DBG END
+
+
+
   }
 }
 
@@ -92,8 +99,7 @@ int ADF4351_ss_toggle() {
   digitalWrite(ADF4351_ss_pin, LOW);
 }
 
-void ADF4351_convertFreq(long freq, unsigned long R[])
-{
+void ADF4351_prepareConfig() {
   // PLL-Reg-R0         =  32bit
   // Registerselect        3bit
   // int F_Frac = 4;       // 12bit
@@ -210,24 +216,24 @@ void ADF4351_convertFreq(long freq, unsigned long R[])
   long M_Mod = PFDFreq * (100000 / ADF4351_freqStepCurrent) / 100000;
   int F_Frac = round((N - N_Int) * M_Mod);
 
-  R[0] = (unsigned long)(0 + F_Frac * pow(2, 3) + N_Int * pow(2, 15));
-  R[1] = (unsigned long)(1 + M_Mod * pow(2, 3) + P_Phase * pow(2, 15) + Prescal * pow(2, 27) + PhaseAdj * pow(2, 28));
-  //  R[1] = (R[1])+1; // Registerselect adjust ?? because unpossible 2x12bit in pow() funktion
-  R[2] = (unsigned long)(2 + U1_CountRes * pow(2, 3) + U2_Cp3state * pow(2, 4) + U3_PwrDown * pow(2, 5) + U4_PDpola * pow(2, 6) + U5_LPD * pow(2, 7) + U6_LPF * pow(2, 8) + CP_ChgPump * pow(2, 9) + D1_DoublBuf * pow(2, 13) + R_Counter * pow(2, 14) + RD1_Rdiv2 * pow(2, 24) + RD2refdoubl * pow(2, 25) + M_Muxout * pow(2, 26) + LoNoisSpur * pow(2, 29));
-  R[3] = (unsigned long)(3 + D_Clk_div * pow(2, 3) + C_Clk_mode * pow(2, 15) + 0 * pow(2, 17) + F1_Csr * pow(2, 18) + 0 * pow(2, 19) + F2_ChgChan * pow(2, 21) +  F3_ADB * pow(2, 22) + F4_BandSel * pow(2, 23) + 0 * pow(2, 24));
-  R[4] = (unsigned long)(4 + D_out_PWR * pow(2, 3) + D_RF_ena * pow(2, 5) + D_auxOutPwr * pow(2, 6) + D_auxOutEna * pow(2, 8) + D_auxOutSel * pow(2, 9) + D_MTLD * pow(2, 10) + D_VcoPwrDown * pow(2, 11) + B_BandSelClk * pow(2, 12) + D_RfDivSel * pow(2, 20) + D_FeedBck * pow(2, 23));
-  R[5] = (unsigned long)(5 + 0 * pow(2, 3) + 3 * pow(2, 19) + 0 * pow(2, 21) + D_LdPinMod * pow(2, 22));
+  ADF4351_registers[0] = (unsigned long)(0 + F_Frac * pow(2, 3) + N_Int * pow(2, 15));
+  ADF4351_registers[1] = (unsigned long)(1 + M_Mod * pow(2, 3) + P_Phase * pow(2, 15) + Prescal * pow(2, 27) + PhaseAdj * pow(2, 28));
+  //  ADF4351_registers[1] = (ADF4351_registers[1])+1; // Registerselect adjust ?? because unpossible 2x12bit in pow() funktion
+  ADF4351_registers[2] = (unsigned long)(2 + U1_CountRes * pow(2, 3) + U2_Cp3state * pow(2, 4) + U3_PwrDown * pow(2, 5) + U4_PDpola * pow(2, 6) + U5_LPD * pow(2, 7) + U6_LPF * pow(2, 8) + CP_ChgPump * pow(2, 9) + D1_DoublBuf * pow(2, 13) + R_Counter * pow(2, 14) + RD1_Rdiv2 * pow(2, 24) + RD2refdoubl * pow(2, 25) + M_Muxout * pow(2, 26) + LoNoisSpur * pow(2, 29));
+  ADF4351_registers[3] = (unsigned long)(3 + D_Clk_div * pow(2, 3) + C_Clk_mode * pow(2, 15) + 0 * pow(2, 17) + F1_Csr * pow(2, 18) + 0 * pow(2, 19) + F2_ChgChan * pow(2, 21) +  F3_ADB * pow(2, 22) + F4_BandSel * pow(2, 23) + 0 * pow(2, 24));
+  ADF4351_registers[4] = (unsigned long)(4 + D_out_PWR * pow(2, 3) + D_RF_ena * pow(2, 5) + D_auxOutPwr * pow(2, 6) + D_auxOutEna * pow(2, 8) + D_auxOutSel * pow(2, 9) + D_MTLD * pow(2, 10) + D_VcoPwrDown * pow(2, 11) + B_BandSelClk * pow(2, 12) + D_RfDivSel * pow(2, 20) + D_FeedBck * pow(2, 23));
+  ADF4351_registers[5] = (unsigned long)(5 + 0 * pow(2, 3) + 3 * pow(2, 19) + 0 * pow(2, 21) + D_LdPinMod * pow(2, 22));
 }
 //to do instead of writing 0x08000000 you can use other two possibilities: (1ul << 27) or (uint32_t) (1 << 27).
 
 
 // as PLL-Register Referenz
-// R[0] = (0x002E0020); // 145.0 Mhz, 12.5khz raster
-// R[1] = (0x08008029);
-// R[2] = (0x00004E42);
-// R[3] = (0x000004B3);
-// R[4] = (0x00BC8024);
-// R[5] = (0x00580005);
+// ADF4351_registers[0] = (0x002E0020); // 145.0 Mhz, 12.5khz raster
+// ADF4351_registers[1] = (0x08008029);
+// ADF4351_registers[2] = (0x00004E42);
+// ADF4351_registers[3] = (0x000004B3);
+// ADF4351_registers[4] = (0x00BC8024);
+// ADF4351_registers[5] = (0x00580005);
 
 /*
   Low Noise and Low Spur Modes
