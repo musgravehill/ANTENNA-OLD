@@ -19,6 +19,7 @@
    MISO 12 ---- null, but d12 is SPI
    SCK 13 -----> CLK
    d3----------> LE
+   LD = lock detect
 
     TODO
    int LoNoisSpur = 1; //Low Spurious Mode
@@ -34,8 +35,8 @@
 #include <SPI.h>
 #define ADF4351_ss_pin 3 //SPI-SS enable ADF4351
 uint32_t ADF4351_referenceFreq = 2500000; //*10 Hz reference frequency = quartz 25 MHz
-uint32_t ADF4351_frequency;
-uint32_t ADF4351_freqStepCurrent;
+uint32_t ADF4351_frequency= 43392000L; //*10 Hz = 433 MHz 
+uint32_t ADF4351_freqStepCurrent=0;
 uint32_t ADF4351_stepsVariants[7] = {
   625, //*10Hz 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
   1000, //*10Hz 10 khz
@@ -48,10 +49,14 @@ uint32_t ADF4351_stepsVariants[7] = {
 String OLED_stepsVariants_val[7] = {"6.25", "10", "12.5", "25", "1", "10", "100"};
 String OLED_stepsVariants_kmhz[7] = {"kHz", "kHz", "kHz", "kHz", "MHz", "MHz", "MHz"};
 
+byte ADF4351_lowNoiseOrSpurVariants[2] = {B0, B11};  
+uint8_t ADF4351_lowNoiseOrSpur_current = 0;
+String ADF4351_lowNoiseOrSpur_verb[2] = {"LOW NOISE MODE", "LOW SPUR MODE"};
+
 int ADF4351_stepsVariantsNumCurrent = 0;
 unsigned long ADF4351_registers[6]; //ADF4351 Registers, see datasheet
 
-boolean ADF4351_isNeedSetNewFreq = false;
+boolean ADF4351_isNeedSetNewConfig = false;
 uint32_t ADF4351_changeConfig_prev_ms = 0L;
 
 //========================================== INTERFACE ==========================================================
@@ -64,7 +69,9 @@ boolean ENCODER_A_state_prev = false;
 
 #define BTN_step A0
 #define BTN_out_power A1 //TODO
-#define BTN_lownoisespur A2 //TODO
+#define BTN_lownoisespur A2
+
+uint32_t INTERFACE_action_prev_ms = 0L;
 
 
 

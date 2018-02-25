@@ -5,43 +5,62 @@ void ADF4351_init() {
   SPI.setDataMode(SPI_MODE0);
   SPI.setBitOrder(MSBFIRST);
   SPI.begin();
-  delay(500);
-
-  ADF4351_frequency = 43392000L; //*10 Hz = 433 MHz
-  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
-
-  ADF4351_setFreq();
+  delay(900);
+  ADF4351_setConfig();
+}
+void ADF4351_lowNoiseSpurMode_next() {
+  ADF4351_lowNoiseOrSpur_current += 1;
+  if (ADF4351_lowNoiseOrSpur_current > 1) {  //cycle, return to 0-pos
+    ADF4351_lowNoiseOrSpur_current = 0;
+  }
+  ADF4351_isNeedSetNewConfig = true;
 }
 
-void ADF4351_freq_inc() {  
+void ADF4351_step_next() {
+  ADF4351_stepsVariantsNumCurrent += 1;
+  if (ADF4351_stepsVariantsNumCurrent > 6) {  //cycle, return to 0-pos
+    ADF4351_stepsVariantsNumCurrent = 0;
+  }
+  ADF4351_isNeedSetNewConfig = true;
+}
+
+void ADF4351_freq_inc() {
   ADF4351_frequency += ADF4351_freqStepCurrent;
-  ADF4351_isNeedSetNewFreq = true;
-  //ADF4351_setFreq(ADF4351_frequency); - устанаваливать частоту не каждый сдвиг энкодера, а после завершения вращения НА НАЖАТИЕ ЭНКОДЕРА
+  ADF4351_isNeedSetNewConfig = true;
 }
 
-void ADF4351_freq_dec() {  
+void ADF4351_freq_dec() {
   ADF4351_frequency -= ADF4351_freqStepCurrent;
-  ADF4351_isNeedSetNewFreq = true;
-  //ADF4351_setFreq(ADF4351_frequency);- устанаваливать частоту не каждый сдвиг энкодера, а после завершения вращения НА НАЖАТИЕ ЭНКОДЕРА
+  ADF4351_isNeedSetNewConfig = true;
 }
 
 
-void ADF4351_setFreq() {
-  ADF4351_isNeedSetNewFreq = false;
+void ADF4351_setConfig() {
+   Serial.println(ADF4351_registers[2],HEX);
 
-  ADF4351_convertFreq(ADF4351_frequency, ADF4351_registers);
-  ADF4351_writeToRegister(5);
-  delayMicroseconds(2500);
-  ADF4351_writeToRegister(4);
-  delayMicroseconds(2500);
-  ADF4351_writeToRegister(3);
-  delayMicroseconds(2500);
-  ADF4351_writeToRegister(2);
-  delayMicroseconds(2500);
-  ADF4351_writeToRegister(1);
-  delayMicroseconds(2500);
-  ADF4351_writeToRegister(0);
-  delayMicroseconds(2500);
+  
+  uint32_t  currMillis = millis();
+  if ((currMillis - ADF4351_changeConfig_prev_ms) > 1111L) {
+    ADF4351_changeConfig_prev_ms = currMillis;
+    Serial.println("SEND CONFIG");
+    ADF4351_isNeedSetNewConfig = false;
+
+    ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent]; //it is in ADF4351_convertFreq()
+
+    ADF4351_convertFreq(ADF4351_frequency, ADF4351_registers);
+    ADF4351_writeToRegister(5);
+    delayMicroseconds(2500);
+    ADF4351_writeToRegister(4);
+    delayMicroseconds(2500);
+    ADF4351_writeToRegister(3);
+    delayMicroseconds(2500);
+    ADF4351_writeToRegister(2);
+    delayMicroseconds(2500);
+    ADF4351_writeToRegister(1);
+    delayMicroseconds(2500);
+    ADF4351_writeToRegister(0);
+    delayMicroseconds(2500);
+  }
 }
 
 void ADF4351_writeToRegister(int idx)
@@ -97,7 +116,7 @@ void ADF4351_convertFreq(long freq, unsigned long R[])
   //  int RD1_Rdiv2 = 0;    // 1bit
   //  int RD2refdoubl = 0; // 1bit
   int M_Muxout = 0;     // 3bit
-  int LoNoisSpur = 0;      // 2bit
+  int LoNoisSpur = ADF4351_lowNoiseOrSpurVariants[ADF4351_lowNoiseOrSpur_current];      //0   2bit
   // reserved           // 1bit
 
   // PLL-Reg-R3         =  32bit
@@ -203,3 +222,30 @@ void ADF4351_convertFreq(long freq, unsigned long R[])
 // R[3] = (0x000004B3);
 // R[4] = (0x00BC8024);
 // R[5] = (0x00580005);
+
+/*
+  Low Noise and Low Spur Modes
+  The noise mode on the ADF4351 is controlled by setting
+  Bits[DB30:DB29] in Register 2 (see Figure 26). The noise mode
+  allows the user to optimize a design either for improved spurious
+  performance or for improved phase noise performance.
+  When the low spur mode is selected, dither is enabled. Dither
+  randomizes the fractional quantization noise so that it resembles
+  white noise rather than spurious noise. As a result, the part is
+  optimized for improved spurious performance. Low spur mode
+  is normally used for fast-locking applications when the PLL
+  closed-loop bandwidth is wide. Wide loop bandwidth is a loop
+  bandwidth greater than 1/10 of the RFOUT channel step resolution
+  (fRES). A wide loop filter does not attenuate the spurs to the
+  same level as a narrow loop bandwidth.
+  For best noise performance, use the low noise mode option.
+  When the low noise mode is selected, dither is disabled. This
+  mode ensures that the charge pump operates in an optimum
+  region for noise performance. Low noise mode is extremely
+  useful when a narrow loop filter bandwidth is available. The
+  synthesizer ensures extremely low noise, and the filter attenuates
+  the spurs. Figure 10 through Figure 12 show the trade-offs in a
+  typical W-CDMA setup for different noise and spur settings.
+*/
+
+

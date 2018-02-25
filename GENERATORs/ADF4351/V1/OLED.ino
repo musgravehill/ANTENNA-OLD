@@ -12,15 +12,14 @@ void OLED_display() {
   myOLED.print("OUT", 0, 40);
   myOLED.print("dBm", 66, 41);
   myOLED.print("NOLOCK", 92, 56);
-  myOLED.print("LOW NOISE", 0, 56);
-  if (ADF4351_isNeedSetNewFreq) {
+  myOLED.print(ADF4351_lowNoiseOrSpur_verb[ADF4351_lowNoiseOrSpur_current], 0, 56);
+  if (ADF4351_isNeedSetNewConfig) {
     if (OLED_blynk_state) {
       myOLED.print("*", 122, 5);
       OLED_blynk_state = false;
     } else {
       OLED_blynk_state = true;
     }
-
   }
 
   myOLED.setFont(MediumNumbers);

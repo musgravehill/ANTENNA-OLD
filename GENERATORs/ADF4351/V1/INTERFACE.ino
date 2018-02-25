@@ -1,21 +1,34 @@
 
 void BUTTON_init() {
   pinMode(BTN_step, INPUT_PULLUP);
-
+  pinMode(BTN_lownoisespur, INPUT_PULLUP);
+  pinMode(BTN_out_power, INPUT_PULLUP);
 }
+
 void BUTTON_check() {
-  boolean button_state = digitalRead(BTN_step);
+  boolean button_state;
+
+  //BTN STEP
+  button_state = digitalRead(BTN_step);
   if (!button_state) {
     uint32_t  currMillis = millis();
-    if ((currMillis - ADF4351_changeConfig_prev_ms) > 1111L) {
-      ADF4351_changeConfig_prev_ms = currMillis;
-      ADF4351_stepsVariantsNumCurrent += 1;
-      if (ADF4351_stepsVariantsNumCurrent > 6) {
-        ADF4351_stepsVariantsNumCurrent = 0;
-      }
-      ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
+    if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
+      INTERFACE_action_prev_ms = currMillis;
+      ADF4351_step_next();
     }
   }
+
+  //BTN LOW noise\spur mode
+  button_state = digitalRead(BTN_lownoisespur);
+  if (!button_state) {
+    uint32_t  currMillis = millis();
+    if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
+      INTERFACE_action_prev_ms = currMillis;
+      ADF4351_lowNoiseSpurMode_next();
+    }
+  }
+
+  //BTN output rf power
 }
 
 void ENCODER_init() {
@@ -27,12 +40,7 @@ void ENCODER_init() {
 void ENCODER_check() {
   boolean ENCODER_button_state = digitalRead(ENCODER_button);
   if (!ENCODER_button_state) {
-    uint32_t  currMillis = millis();
-    if ((currMillis - ADF4351_changeConfig_prev_ms) > 1111L) {
-      ADF4351_changeConfig_prev_ms = currMillis;
-      Serial.println("ENCODER BTN");
-      ADF4351_setFreq();
-    }
+    ADF4351_setConfig();
   }
 
   ENCODER_A_state = digitalRead(ENCODER_A);
