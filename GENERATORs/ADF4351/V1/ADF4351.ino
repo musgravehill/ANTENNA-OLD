@@ -7,14 +7,29 @@ void ADF4351_init() {
   SPI.begin();
   delay(500);
 
-  ADF4351_frequency = 43392000L; //*10 Hz = 433 MHz 
+  ADF4351_frequency = 43392000L; //*10 Hz = 433 MHz
   ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
 
-  ADF4351_setFreq(ADF4351_frequency);
+  ADF4351_setFreq();
+}
+
+void ADF4351_freq_inc() {
+  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
+  ADF4351_frequency += ADF4351_freqStepCurrent;
+  ADF4351_isNeedSetNewFreq = true;
+  //ADF4351_setFreq(ADF4351_frequency); - устанаваливать частоту не каждый сдвиг энкодера, а после завершения вращения НА НАЖАТИЕ ЭНКОДЕРА
+}
+
+void ADF4351_freq_dec() {
+  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
+  ADF4351_frequency -= ADF4351_freqStepCurrent;
+  ADF4351_isNeedSetNewFreq = true;
+  //ADF4351_setFreq(ADF4351_frequency);- устанаваливать частоту не каждый сдвиг энкодера, а после завершения вращения НА НАЖАТИЕ ЭНКОДЕРА
 }
 
 
-void ADF4351_setFreq(long ADF4351_frequency) {
+void ADF4351_setFreq() {
+  ADF4351_isNeedSetNewFreq = false;
 
   ADF4351_convertFreq(ADF4351_frequency, ADF4351_registers);
   ADF4351_writeToRegister(5);
@@ -30,6 +45,7 @@ void ADF4351_setFreq(long ADF4351_frequency) {
   ADF4351_writeToRegister(0);
   delayMicroseconds(2500);
 }
+
 void ADF4351_writeToRegister(int idx)
 { // make 4 byte from integer for SPI-Transfer
   byte buf[4];

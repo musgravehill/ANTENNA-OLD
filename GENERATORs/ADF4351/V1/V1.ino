@@ -32,7 +32,7 @@
 
 //============================================================= ADF4351 =========================================
 #include <SPI.h>
-#define ADF4351_ss_pin 3 //SPI-SS enable ADF4351
+#define ADF4351_ss_pin 4 //SPI-SS enable ADF4351
 uint32_t ADF4351_referenceFreq = 2500000; //*10 Hz reference frequency = quartz 25 MHz
 uint32_t ADF4351_frequency;
 uint32_t ADF4351_freqStepCurrent;
@@ -51,8 +51,18 @@ String OLED_stepsVariants_kmhz[7] = {"kHz", "kHz", "kHz", "kHz", "MHz", "MHz", "
 int ADF4351_stepsVariantsNumCurrent = 0;
 unsigned long ADF4351_registers[6]; //ADF4351 Registers, see datasheet
 
+boolean ADF4351_isNeedSetNewFreq = false;
+uint32_t ADF4351_changeConfig_prev_ms = 0L;
+
 //========================================== INTERFACE ==========================================================
-#define BUTTON_udo_push 6 //PD6
+#define ENCODER_button 6
+#define ENCODER_A 7
+#define ENCODER_B 8
+boolean ENCODER_A_state;
+boolean ENCODER_B_state;
+boolean ENCODER_A_state_prev = false;
+
+
 
 //OLED SDA A4, SCL A5
 #include <OLED_I2C.h>
@@ -60,8 +70,10 @@ OLED  myOLED(SDA, SCL);
 extern uint8_t SmallFont[]; //6*8
 extern uint8_t MediumNumbers[]; //12*16
 extern uint8_t BigNumbers[]; //14*24
+boolean OLED_blynk_state = false;
 
 //================================== TIMEMACHINE =================================================================
+uint32_t TIMEMACHINE_prev_3ms = 0L;
 uint32_t TIMEMACHINE_prev_211ms = 0L;
 uint32_t TIMEMACHINE_prev_1103ms = 0L;
 
@@ -69,13 +81,14 @@ uint32_t TIMEMACHINE_prev_1103ms = 0L;
 void setup() {
   ADF4351_init();
   OLED_init();
-
+  ENCODER_init();
   Serial.begin(9600);
 }
 
 void loop() {
 
   TIMEMACHINE_loop();
+
 
   /*
     //case btnLEFT:
