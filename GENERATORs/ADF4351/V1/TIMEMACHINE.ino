@@ -7,5 +7,5 @@ void TIMEMACHINE_loop() {
 }
 
 void TIMEMACHINE_211ms() {
-
+   OLED_display();
 }

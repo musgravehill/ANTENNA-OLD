@@ -57,27 +57,15 @@ uint32_t TIMEMACHINE_prev_211ms = 0L;
 
 
 void setup() {
-  pinMode (ADF4351_ss_pin, OUTPUT);
-  digitalWrite(ADF4351_ss_pin, LOW);
-  SPI.setDataMode(SPI_MODE0);
-  SPI.setBitOrder(MSBFIRST);
-  SPI.setClockDivider(SPI_CLOCK_DIV128);
-  SPI.begin();
-  delay(500);
-
-  ADF4351_stepsVariants[0] = 625; //*10 Hz 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
-  ADF4351_stepsVariants[1] = 1000; //*10 Hz 10 khz
-  ADF4351_stepsVariants[2] = 1250; //*10 Hz 12.5 khz
-  ADF4351_stepsVariants[3] = 2500; //*10 Hz 25 khz
-  ADF4351_stepsVariants[4] = 100000; //*10 Hz 1 Mhz ADF4351_stepsVariants
-
-  ADF4351_setFreq(ADF4351_frequency);
+  ADF4351_init();
+  OLED_init();
 }
 
 void loop() {
 
   TIMEMACHINE_loop();
 
+/*
   //case btnLEFT:
   ADF4351_stepsVariantsNumCurrent += 1;
   if (ADF4351_stepsVariantsNumCurrent > 4) ADF4351_stepsVariantsNumCurrent = 0;
@@ -92,7 +80,7 @@ void loop() {
   //case btnDOWN:
   ADF4351_frequency -= ADF4351_freqStepCurrent;
   ADF4351_setFreq(ADF4351_frequency);
-
+*/
 }
 
 
