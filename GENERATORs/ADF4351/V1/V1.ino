@@ -51,11 +51,11 @@ String OLED_stepsVariants_kmhz[7] = {"kHz", "kHz", "kHz", "kHz", "MHz", "MHz", "
 
 byte ADF4351_lowNoiseOrSpurVariants[2] = {B0, B11};
 uint8_t ADF4351_lowNoiseOrSpur_current = 0;
-String ADF4351_lowNoiseOrSpur_verb[2] = {"LOW NOISE MODE", "LOW SPUR MODE"};
+String ADF4351_lowNoiseOrSpur_verb[2] = {"LOW-NOISE-MODE", "LOW-SPUR-MODE"};
 
 byte ADF4351_outputPowerVariants[4] = {B0, B01, B10, B11};
 uint8_t ADF4351_outputPower_current = 0;
-String ADF4351_outputPower_verb[4] = {"-4", "-1", "+2", "+5"};
+String ADF4351_outputPower_verb[4] = {"-4", "-1", "2", "5"};
 
 int ADF4351_stepsVariantsNumCurrent = 0;
 unsigned long ADF4351_registers[6]; //ADF4351 Registers, see datasheet
