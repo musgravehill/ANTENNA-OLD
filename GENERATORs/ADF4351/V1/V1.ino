@@ -34,17 +34,20 @@
 #include <SPI.h>
 #define ADF4351_ss_pin 3 //SPI-SS enable ADF4351
 uint32_t ADF4351_referenceFreq = 2500000; //*10 Hz reference frequency = quartz 25 MHz
-uint32_t ADF4351_frequency; 
-uint32_t ADF4351_freqStepCurrent; 
+uint32_t ADF4351_frequency;
+uint32_t ADF4351_freqStepCurrent;
 uint32_t ADF4351_stepsVariants[7] = {
-625, //*10Hz 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
-1000, //*10Hz 10 khz
-1250, //*10Hz 12.5 khz
-2500, //*10Hz 25 khz
-100000, //*10Hz 1 Mhz
-1000000, //*10Hz 10 Mhz
-10000000 //*10Hz 100 Mhz 
+  625, //*10Hz 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
+  1000, //*10Hz 10 khz
+  1250, //*10Hz 12.5 khz
+  2500, //*10Hz 25 khz
+  100000, //*10Hz 1 Mhz
+  1000000, //*10Hz 10 Mhz
+  10000000 //*10Hz 100 Mhz
 };
+String OLED_stepsVariants_val[7] = {"6.25", "10", "12.5", "25", "1", "10", "100"};
+String OLED_stepsVariants_kmhz[7] = {"kHz", "kHz", "kHz", "kHz", "MHz", "MHz", "MHz"};
+
 int ADF4351_stepsVariantsNumCurrent = 0;
 unsigned long ADF4351_registers[6]; //ADF4351 Registers, see datasheet
 
@@ -82,7 +85,7 @@ void loop() {
 
 
     // case btnUP:
-     
+
     ADF4351_setFreq(ADF4351_frequency);
 
 

@@ -16,17 +16,15 @@ void TIMEMACHINE_211ms() {
 }
 
 void TIMEMACHINE_1103ms() {
-  //ADF4351_stepsVariantsNumCurrent += 1;
-  //if (ADF4351_stepsVariantsNumCurrent > 6) {
-  //ADF4351_stepsVariantsNumCurrent = 0;
-  //}
-  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
-  ADF4351_frequency += ADF4351_freqStepCurrent;
-  ADF4351_setFreq(ADF4351_frequency);
+  ADF4351_stepsVariantsNumCurrent += 1;
+  if (ADF4351_stepsVariantsNumCurrent > 6) {
+    ADF4351_stepsVariantsNumCurrent = 0;
+  }
+  //ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
+  //ADF4351_frequency += ADF4351_freqStepCurrent;
+  //ADF4351_setFreq(ADF4351_frequency);
 
-     
-   
- 
 
-  
+
+
 }
