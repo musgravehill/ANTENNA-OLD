@@ -94,36 +94,16 @@ boolean OLED_blynk_state = false;
 uint32_t TIMEMACHINE_prev_3ms = 0L;
 uint32_t TIMEMACHINE_prev_311ms = 0L;
 
-
 void setup() {
   ADF4351_init();
   OLED_init();
   ENCODER_init();
   BUTTON_init();
-  Serial.begin(9600);  
+  Serial.begin(9600);    
 }
 
 void loop() {
-
   TIMEMACHINE_loop();
-
-
-  /*
-    //case btnLEFT:
-    ADF4351_stepsVariantsNumCurrent += 1;
-    if (ADF4351_stepsVariantsNumCurrent > 6) ADF4351_stepsVariantsNumCurrent = 0;
-     ADF4351_frequency += ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
-
-
-    // case btnUP:
-
-    ADF4351_setFreq(ADF4351_frequency);
-
-
-    //case btnDOWN:
-    ADF4351_frequency -= ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent];
-    ADF4351_setFreq(ADF4351_frequency);
-  */
 }
 
 
