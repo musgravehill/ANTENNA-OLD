@@ -14,11 +14,9 @@ void TIMEMACHINE_loop() {
 void TIMEMACHINE_3ms() {
   ENCODER_check();
   BUTTON_check();
-  mySerial.print("bobobobobobobob");
 }
 
 void TIMEMACHINE_311ms() {
   OLED_display();
-  
 }
 

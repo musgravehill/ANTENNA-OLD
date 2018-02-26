@@ -77,9 +77,6 @@ boolean ENCODER_A_state_prev = false;
 
 uint32_t INTERFACE_action_prev_ms = 0L;
 
-////===========tmp
-#include <SoftwareSerial.h>
-SoftwareSerial mySerial(6, 5); // RX, TX
 
 
 //OLED SDA A4, SCL A5
@@ -101,7 +98,6 @@ void setup() {
   ENCODER_init();
   BUTTON_init();
   Serial.begin(9600);
-  mySerial.begin(9600);
 }
 
 void loop() {
