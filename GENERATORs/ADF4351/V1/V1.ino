@@ -21,22 +21,29 @@
    d3----------> LE
    LD = lock detect
 
-    TODO
-   int LoNoisSpur = 1; //Low Spurious Mode
-    int D_out_PWR = 11; //POut +5db
+ 
 
     ENCODER add
     if Freq>4.4GHz stop ++
     if Freq < 35Mhz stop --
+
+
+     int8_t      |  char                       |   от -128 до 127
+ uint8_t    |  byte, unsigned char |   от 0 до 255
+ int16_t    |  int                          |   от -32768 до 32767
+ uint16_t  |  unsigned int, word   |   от 0 до 65535 
+                                               
+ int32_t    |  long                        |  от  -2147483648 до 2147483647 
+ uint32_t  |  unsigned long          |  от 0 до 4294967295
 
 */
 
 //============================================================= ADF4351 =========================================
 #include <SPI.h>
 #define ADF4351_ss_pin 3 //SPI-SS enable ADF4351
-uint32_t ADF4351_referenceFreq = 2500000; //*10 Hz reference frequency = quartz 25 MHz
+uint32_t ADF4351_referenceFreq = 2500000L; //*10 Hz reference frequency = quartz 25 MHz
 uint32_t ADF4351_frequency = 43392000L; //*10 Hz = 433 MHz
-uint32_t ADF4351_freqStepCurrent = 0;
+uint32_t ADF4351_freqStepCurrent = 0L;
 uint32_t ADF4351_stepsVariants[7] = {
   625, //*10Hz 6,25 khz, 5khz does not work in Int-N mode (MOD> 4095) at 25Mhz Ref.
   1000, //*10Hz 10 khz
@@ -46,22 +53,21 @@ uint32_t ADF4351_stepsVariants[7] = {
   1000000, //*10Hz 10 Mhz
   10000000 //*10Hz 100 Mhz
 };
+uint8_t ADF4351_stepsVariantsNumCurrent = 0;
 String OLED_stepsVariants_val[7] = {"6.25", "10", "12.5", "25", "1", "10", "100"};
 String OLED_stepsVariants_kmhz[7] = {"kHz", "kHz", "kHz", "kHz", "MHz", "MHz", "MHz"};
 
-byte ADF4351_lowNoiseOrSpurVariants[2] = {B0, B11};
+uint8_t ADF4351_lowNoiseOrSpurVariants[2] = {B0, B11};
 uint8_t ADF4351_lowNoiseOrSpur_current = 0;
 String ADF4351_lowNoiseOrSpur_verb[2] = {"LOW-NOISE-MODE", "LOW-SPUR-MODE"};
 
-byte ADF4351_outputPowerVariants[4] = {B0, B01, B10, B11};
+uint8_t ADF4351_outputPowerVariants[4] = {B0, B01, B10, B11};
 uint8_t ADF4351_outputPower_current = 0;
 String ADF4351_outputPower_verb[4] = {"-4", "-1", "2", "5"};
 
-int ADF4351_stepsVariantsNumCurrent = 0;
-unsigned long ADF4351_registers[6]; //ADF4351 Registers, see datasheet
+uint32_t ADF4351_registers[6]; //ADF4351 Registers, see datasheet
 
 boolean ADF4351_isNeedSetNewConfig = false;
-uint32_t ADF4351_changeConfig_prev_ms = 0L;
 
 //========================================== INTERFACE ==========================================================
 #define ENCODER_button 9
@@ -77,17 +83,11 @@ boolean ENCODER_A_state_prev = false;
 
 uint32_t INTERFACE_action_prev_ms = 0L;
 
-////===========tmp
-#include <SoftwareSerial.h>
-SoftwareSerial mySerial(6, 5); // RX, TX
-
-
 //OLED SDA A4, SCL A5
 #include <OLED_I2C.h>
 OLED  myOLED(SDA, SCL);
 extern uint8_t SmallFont[]; //6*8
 extern uint8_t MediumNumbers[]; //12*16
-extern uint8_t BigNumbers[]; //14*24
 boolean OLED_blynk_state = false;
 
 //================================== TIMEMACHINE =================================================================
@@ -100,8 +100,7 @@ void setup() {
   OLED_init();
   ENCODER_init();
   BUTTON_init();
-  Serial.begin(9600);
-  mySerial.begin(9600);
+  Serial.begin(9600);  
 }
 
 void loop() {

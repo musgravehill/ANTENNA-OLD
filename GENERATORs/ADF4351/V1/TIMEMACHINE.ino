@@ -8,17 +8,15 @@ void TIMEMACHINE_loop() {
     TIMEMACHINE_311ms();
     TIMEMACHINE_prev_311ms = TIMEMACHINE_currMillis;
   }
-  
+
 }
 
 void TIMEMACHINE_3ms() {
   ENCODER_check();
   BUTTON_check();
-  mySerial.print("bobobobobobobob");
 }
 
 void TIMEMACHINE_311ms() {
   OLED_display();
-  
 }
 

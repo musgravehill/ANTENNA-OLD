@@ -14,7 +14,7 @@ void ADF4351_out_power_next() {
   if (ADF4351_outputPower_current > 3) {  //cycle, return to 0-pos
     ADF4351_outputPower_current = 0;
   }
-  ADF4351_isNeedSetNewConfig = true;  
+  ADF4351_isNeedSetNewConfig = true;
 }
 
 void ADF4351_lowNoiseSpurMode_next() {
@@ -46,43 +46,34 @@ void ADF4351_freq_dec() {
 
 
 void ADF4351_setConfig() {
-  uint32_t  currMillis = millis();
-  if ((currMillis - ADF4351_changeConfig_prev_ms) > 1111L) {
-    ADF4351_changeConfig_prev_ms = currMillis;
+  ADF4351_isNeedSetNewConfig = false;
+  ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent]; //it is in ADF4351_prepareConfig()
+  ADF4351_prepareConfig();
+  ADF4351_writeToRegister(5);
+  delayMicroseconds(2500);
+  ADF4351_writeToRegister(4);
+  delayMicroseconds(2500);
+  ADF4351_writeToRegister(3);
+  delayMicroseconds(2500);
+  ADF4351_writeToRegister(2);
+  delayMicroseconds(2500);
+  ADF4351_writeToRegister(1);
+  delayMicroseconds(2500);
+  ADF4351_writeToRegister(0);
+  delayMicroseconds(2500);
 
-    ADF4351_isNeedSetNewConfig = false;
-
-    ADF4351_freqStepCurrent = ADF4351_stepsVariants[ADF4351_stepsVariantsNumCurrent]; //it is in ADF4351_prepareConfig()
-
-    ADF4351_prepareConfig();
-    ADF4351_writeToRegister(5);
-    delayMicroseconds(2500);
-    ADF4351_writeToRegister(4);
-    delayMicroseconds(2500);
-    ADF4351_writeToRegister(3);
-    delayMicroseconds(2500);
-    ADF4351_writeToRegister(2);
-    delayMicroseconds(2500);
-    ADF4351_writeToRegister(1);
-    delayMicroseconds(2500);
-    ADF4351_writeToRegister(0);
-    delayMicroseconds(2500);
-
-    //////DBG
-    Serial.println("\r\n SEND CONFIG \r\n");
-    for (byte i = 0; i < 6; i++) {
-      Serial.print("REG");
-      Serial.print(i, DEC);
-      Serial.print(" ");
-      Serial.println(ADF4351_registers[i], HEX);
-    }
-    Serial.print("\r\n ADF4351_freqStepCurrent=");
-    Serial.println(ADF4351_freqStepCurrent, DEC);
-    ///////DBG END
-
-
-
+  //////DBG
+  Serial.println("\r\n SEND CONFIG \r\n");
+  for (byte i = 0; i < 6; i++) {
+    Serial.print("REG");
+    Serial.print(i, DEC);
+    Serial.print(" ");
+    Serial.println(ADF4351_registers[i], HEX);
   }
+  Serial.print("\r\n ADF4351_freqStepCurrent=");
+  Serial.println(ADF4351_freqStepCurrent, DEC);
+  ///////DBG END
+
 }
 
 void ADF4351_writeToRegister(int idx)
@@ -119,53 +110,53 @@ void ADF4351_prepareConfig() {
   // Registerselect        3bit
   //int M_Mod = 5;        // 12bit
   int P_Phase = 1;     // 12bit bei 2x12bit hintereinander pow()-bug !!
-  int Prescal = 0;     // 1bit geht nicht ???
-  int PhaseAdj = 0;    // 1bit geht auch nicht ???
+  uint8_t Prescal = 0;     // 1bit geht nicht ???
+  uint8_t PhaseAdj = 0;    // 1bit geht auch nicht ???
   // reserved           // 3bit
 
   // PLL-Reg-R2         =  32bit
   // Registerselect        3bit
-  int U1_CountRes = 0; // 1bit
-  int U2_Cp3state = 0; // 1bit
-  int U3_PwrDown = 0;  // 1bit
-  int U4_PDpola = 1;    // 1bit
-  int U5_LPD = 0;       // 1bit
-  int U6_LPF = 1;       // 1bit 1=Integer, 0=Frac not spported yet
-  int CP_ChgPump = 7;     // 4bit
-  int D1_DoublBuf = 0; // 1bit
+  uint8_t U1_CountRes = 0; // 1bit
+  uint8_t U2_Cp3state = 0; // 1bit
+  uint8_t U3_PwrDown = 0;  // 1bit
+  uint8_t U4_PDpola = 1;    // 1bit
+  uint8_t U5_LPD = 0;       // 1bit
+  uint8_t U6_LPF = 1;       // 1bit 1=Integer, 0=Frac not spported yet
+  uint8_t CP_ChgPump = 7;     // 4bit
+  uint8_t D1_DoublBuf = 0; // 1bit
   //  int R_Counter = 1;   // 10bit
   //  int RD1_Rdiv2 = 0;    // 1bit
   //  int RD2refdoubl = 0; // 1bit
-  int M_Muxout = 0;     // 3bit
-  int LoNoisSpur = ADF4351_lowNoiseOrSpurVariants[ADF4351_lowNoiseOrSpur_current];      //0   2bit
+  uint8_t M_Muxout = 0;     // 3bit
+  uint8_t LoNoisSpur = ADF4351_lowNoiseOrSpurVariants[ADF4351_lowNoiseOrSpur_current];      //0   2bit
   // reserved           // 1bit
 
   // PLL-Reg-R3         =  32bit
   // Registerselect        3bit
   int D_Clk_div = 150; // 12bit
-  int C_Clk_mode = 0;   // 2bit
+  uint8_t C_Clk_mode = 0;   // 2bit
   //  reserved          // 1bit
-  int F1_Csr = 0;       // 1bit
+  uint8_t F1_Csr = 0;       // 1bit
   //  reserved          // 2bit
-  int F2_ChgChan = 0;   // 1bit
-  int F3_ADB = 0;       // 1bit
-  int F4_BandSel = 0;  // 1bit
+  uint8_t F2_ChgChan = 0;   // 1bit
+  uint8_t F3_ADB = 0;       // 1bit
+  uint8_t F4_BandSel = 0;  // 1bit
   //  reserved          // 8bit
 
   // PLL-Reg-R4         =  32bit
   // Registerselect        3bit
-  int D_out_PWR = ADF4351_outputPowerVariants[ADF4351_outputPower_current] ;    // 2bit
-  int D_RF_ena = 1;     // 1bit
-  int D_auxOutPwr = 0;  // 2bit
-  int D_auxOutEna = 0;  // 1bit
-  int D_auxOutSel = 0;  // 1bit
-  int D_MTLD = 0;       // 1bit
-  int D_VcoPwrDown = 0; // 1bit 1=VCO off
+  uint8_t D_out_PWR = ADF4351_outputPowerVariants[ADF4351_outputPower_current] ;    // 2bit
+  uint8_t D_RF_ena = 1;     // 1bit
+  uint8_t D_auxOutPwr = 0;  // 2bit
+  uint8_t D_auxOutEna = 0;  // 1bit
+  uint8_t D_auxOutSel = 0;  // 1bit
+  uint8_t D_MTLD = 0;       // 1bit
+  uint8_t D_VcoPwrDown = 0; // 1bit 1=VCO off
 
   //  int B_BandSelClk = 200; // 8bit
 
-  int D_RfDivSel = 3;    // 3bit 3=70cm 4=2m
-  int D_FeedBck = 1;     // 1bit
+  uint8_t D_RfDivSel = 3;    // 3bit 3=70cm 4=2m
+  uint8_t D_FeedBck = 1;     // 1bit
   // reserved           // 8bit
 
   // PLL-Reg-R5         =  32bit
@@ -173,22 +164,22 @@ void ADF4351_prepareConfig() {
   // reserved           // 16bit
   // reserved     11    // 2bit
   // reserved           // 1bit
-  int D_LdPinMod = 1;    // 2bit muss 1 sein
+  uint8_t D_LdPinMod = 1;    // 2bit muss 1 sein
   // reserved           // 8bit
 
   // Referenz Freg Calc
   //  long ADF4351_referenceFreq = 250000; // Refrenquarz = 25000000hz
   int R_Counter = 1;   // 10bit
-  int RD1_Rdiv2 = 0;    // 1bit
-  int RD2refdoubl = 0; // 1bit
+  uint8_t RD1_Rdiv2 = 0;    // 1bit
+  uint8_t RD2refdoubl = 0; // 1bit
   int B_BandSelClk = 200; // 8bit
   //  int F4_BandSel = 0;  // 1bit
 
   // int F4_BandSel = 10.0 * B_BandSelClk / PFDFreq;
 
-  long RFout = ADF4351_frequency;   // VCO-Frequenz
+  uint32_t RFout = ADF4351_frequency;   // VCO-Frequenz
   // calc bandselect und RF-div
-  int outdiv = 0;
+  uint8_t outdiv = 0;
 
   if (RFout >= 220000000) {
     outdiv = 1;
@@ -221,9 +212,9 @@ void ADF4351_prepareConfig() {
 
   float PFDFreq = ADF4351_referenceFreq * ((1.0 + RD2refdoubl) / (R_Counter * (1.0 + RD1_Rdiv2))); //Referenzfrequenz *10 (все частоту сокращена в 10раз почему-то)
   float N = ((RFout) * outdiv) / PFDFreq;
-  int N_Int = N;
-  long M_Mod = PFDFreq * (100000 / ADF4351_freqStepCurrent) / 100000;
-  int F_Frac = round((N - N_Int) * M_Mod);
+  uint16_t N_Int = N;
+  uint16_t M_Mod = PFDFreq * (100000 / ADF4351_freqStepCurrent) / 100000;
+  uint16_t F_Frac = round((N - N_Int) * M_Mod);
 
   Serial.print("\r\n PFDFreq=");
   Serial.println(PFDFreq, DEC);
