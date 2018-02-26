@@ -99,7 +99,7 @@ void setup() {
   OLED_init();
   ENCODER_init();
   BUTTON_init();
-  Serial.begin(9600);    
+  Serial.begin(9600);     
 }
 
 void loop() {
