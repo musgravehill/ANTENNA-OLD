@@ -72,6 +72,7 @@ void ADF4351_setConfig() {
   }
   Serial.print("\r\n ADF4351_freqStepCurrent=");
   Serial.println(ADF4351_freqStepCurrent, DEC);
+  
   ///////DBG END
 
 }
@@ -79,7 +80,7 @@ void ADF4351_setConfig() {
 void ADF4351_writeToRegister(int idx)
 { // make 4 byte from integer for SPI-Transfer
   byte buf[4];
-  for (int i = 0; i < 4; i++)
+  for (uint8_t i = 0; i < 4; i++)
     buf[i] = (byte)(ADF4351_registers[idx] >> (i * 8));
   ADF4351_writeData(buf[3], buf[2], buf[1], buf[0]);
 }
@@ -216,6 +217,7 @@ void ADF4351_prepareConfig() {
   uint16_t M_Mod = PFDFreq * (100000 / ADF4351_freqStepCurrent) / 100000;
   uint16_t F_Frac = round((N - N_Int) * M_Mod);
 
+/*
   Serial.print("\r\n PFDFreq=");
   Serial.println(PFDFreq, DEC);
 
@@ -233,6 +235,7 @@ void ADF4351_prepareConfig() {
 
   Serial.print("\r\n D_RfDivSel=");
   Serial.println(D_RfDivSel, BIN);
+  */
 
 
 

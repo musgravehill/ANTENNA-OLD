@@ -23,8 +23,8 @@ void OLED_display() {
   }
 
   myOLED.setFont(MediumNumbers);
-  long f_m = ADF4351_frequency / 100000L; //*10Hz
-  long f_k =  (ADF4351_frequency % 100000); //*10Hz
+  uint16_t f_m = ADF4351_frequency / 100000L; //*10Hz
+  uint32_t f_k =  (ADF4351_frequency % 100000); //*10Hz
   myOLED.printNumI(f_m, 0, 0, 4, '0');
   myOLED.printNumI(f_k, 60, 0, 5, '0');
   myOLED.print(".", 47, 0);

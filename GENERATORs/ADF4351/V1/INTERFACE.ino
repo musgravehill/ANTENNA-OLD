@@ -7,11 +7,10 @@ void BUTTON_init() {
 
 void BUTTON_check() {
   boolean button_state;
-
+  uint32_t  currMillis = millis();
   //BTN STEP
   button_state = digitalRead(BTN_step);
   if (!button_state) {
-    uint32_t  currMillis = millis();
     if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
       INTERFACE_action_prev_ms = currMillis;
       ADF4351_step_next();
@@ -21,7 +20,6 @@ void BUTTON_check() {
   //BTN LOW noise\spur mode
   button_state = digitalRead(BTN_lownoisespur);
   if (!button_state) {
-    uint32_t  currMillis = millis();
     if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
       INTERFACE_action_prev_ms = currMillis;
       ADF4351_lowNoiseSpurMode_next();
@@ -31,7 +29,6 @@ void BUTTON_check() {
   //BTN output rf power
   button_state = digitalRead(BTN_out_power);
   if (!button_state) {
-    uint32_t  currMillis = millis();
     if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
       INTERFACE_action_prev_ms = currMillis;
       ADF4351_out_power_next();
@@ -49,7 +46,11 @@ void ENCODER_init() {
 void ENCODER_check() {
   boolean ENCODER_button_state = digitalRead(ENCODER_button);
   if (!ENCODER_button_state) {
-    ADF4351_setConfig();
+    uint32_t  currMillis = millis();
+    if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
+      INTERFACE_action_prev_ms = currMillis;
+      ADF4351_setConfig();
+    }
   }
 
   ENCODER_A_state = digitalRead(ENCODER_A);
