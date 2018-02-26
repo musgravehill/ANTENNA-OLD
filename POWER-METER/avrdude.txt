@@ -1,0 +1,3 @@
+avrdude -C C:\usr\seo-soft\arduino-1.8.4\hardware\tools\avr\etc/avrdude.conf -c usbasp -p ATmega328P -U flash:r:dump.hex:i
+avrdude -C C:\usr\seo-soft\arduino-1.8.4\hardware\tools\avr\etc/avrdude.conf -c usbasp -p ATmega328P -U eeprom:r:eepromdump.hex:i  
+ 
