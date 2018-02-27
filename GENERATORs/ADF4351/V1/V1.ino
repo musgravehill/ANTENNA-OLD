@@ -18,6 +18,7 @@
    MOSI 11 ----> DATA
    MISO 12 ---- null, but d12 is SPI
    SCK 13 -----> CLK
+   d10 no connect, but SPI
    d3----------> LE
    LD = lock detect
 

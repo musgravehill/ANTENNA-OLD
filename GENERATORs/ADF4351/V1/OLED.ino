@@ -10,19 +10,16 @@ void OLED_display() {
   myOLED.print(".", 60, 8);
   myOLED.print("STEP", 0, 23);
   myOLED.print(OLED_stepsVariants_kmhz[ADF4351_stepsVariantsNumCurrent], 76, 23);
-
   if (INTERFACE_freq_multiplier_current > 0) {
     myOLED.print("X", 108, 23);
   }
-
-
   myOLED.print("OUT", 0, 40);
   myOLED.print("dBm", 45, 41);
   myOLED.print("NOLOCK", 92, 56);
   myOLED.print(ADF4351_lowNoiseOrSpur_verb[ADF4351_lowNoiseOrSpur_current], 0, 56);
   if (ADF4351_isNeedSetNewConfig) {
     if (OLED_blynk_state) {
-      myOLED.print("*", 122, 5);
+      myOLED.print("*", 122, 17);
       OLED_blynk_state = false;
     } else {
       OLED_blynk_state = true;
