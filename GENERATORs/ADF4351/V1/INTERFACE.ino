@@ -3,6 +3,7 @@ void BUTTON_init() {
   pinMode(BTN_step, INPUT_PULLUP);
   pinMode(BTN_lownoisespur, INPUT_PULLUP);
   pinMode(BTN_out_power, INPUT_PULLUP);
+  pinMode(BTN_multiplier, INPUT_PULLUP);
 }
 
 void BUTTON_check() {
@@ -16,7 +17,6 @@ void BUTTON_check() {
       ADF4351_step_next();
     }
   }
-
   //BTN LOW noise\spur mode
   button_state = digitalRead(BTN_lownoisespur);
   if (!button_state) {
@@ -25,7 +25,6 @@ void BUTTON_check() {
       ADF4351_lowNoiseSpurMode_next();
     }
   }
-
   //BTN output rf power
   button_state = digitalRead(BTN_out_power);
   if (!button_state) {
@@ -34,7 +33,23 @@ void BUTTON_check() {
       ADF4351_out_power_next();
     }
   }
+  //BTN_multiplier
+  button_state = digitalRead(BTN_multiplier);
+  if (!button_state) {
+    if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
+      INTERFACE_action_prev_ms = currMillis;
+      INTERFACE_freq_multiplier_next();
+    }
+  }
 
+}
+
+//show x1,x2,x4 on display and multiply freq on display only.
+void INTERFACE_freq_multiplier_next() {
+  INTERFACE_freq_multiplier_current++;
+  if (INTERFACE_freq_multiplier_current > 2) {  //cycle, return to 0-pos
+    INTERFACE_freq_multiplier_current = 0;
+  }
 }
 
 void ENCODER_init() {

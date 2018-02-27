@@ -21,7 +21,7 @@
    d3----------> LE
    LD = lock detect
 
- 
+
 
     ENCODER add
     if Freq>4.4GHz stop ++
@@ -29,12 +29,12 @@
 
 
      int8_t      |  char                       |   от -128 до 127
- uint8_t    |  byte, unsigned char |   от 0 до 255
- int16_t    |  int                          |   от -32768 до 32767
- uint16_t  |  unsigned int, word   |   от 0 до 65535 
-                                               
- int32_t    |  long                        |  от  -2147483648 до 2147483647 
- uint32_t  |  unsigned long          |  от 0 до 4294967295
+  uint8_t    |  byte, unsigned char |   от 0 до 255
+  int16_t    |  int                          |   от -32768 до 32767
+  uint16_t  |  unsigned int, word   |   от 0 до 65535
+
+  int32_t    |  long                        |  от  -2147483648 до 2147483647
+  uint32_t  |  unsigned long          |  от 0 до 4294967295
 
 */
 
@@ -78,8 +78,9 @@ boolean ENCODER_B_state;
 boolean ENCODER_A_state_prev = false;
 
 #define BTN_step A0
-#define BTN_out_power A1 
+#define BTN_out_power A1
 #define BTN_lownoisespur A2
+#define BTN_multiplier A3
 
 uint32_t INTERFACE_action_prev_ms = 0L;
 
@@ -90,6 +91,9 @@ extern uint8_t SmallFont[]; //6*8
 extern uint8_t MediumNumbers[]; //12*16
 boolean OLED_blynk_state = false;
 
+uint8_t INTERFACE_freq_multiplier_variants[3] = {1, 2, 4};
+uint8_t INTERFACE_freq_multiplier_current = 0;
+
 //================================== TIMEMACHINE =================================================================
 uint32_t TIMEMACHINE_prev_3ms = 0L;
 uint32_t TIMEMACHINE_prev_311ms = 0L;
@@ -99,7 +103,7 @@ void setup() {
   OLED_init();
   ENCODER_init();
   BUTTON_init();
-  Serial.begin(9600);     
+  Serial.begin(9600);
 }
 
 void loop() {
