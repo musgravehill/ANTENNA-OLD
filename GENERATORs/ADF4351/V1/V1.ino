@@ -72,16 +72,18 @@ boolean ADF4351_isNeedSetNewConfig = false;
 
 //========================================== INTERFACE ==========================================================
 #define ENCODER_button 7
-#define ENCODER_A 8
-#define ENCODER_B 9
+#define ENCODER_A 9
+#define ENCODER_B 8
 boolean ENCODER_A_state;
 boolean ENCODER_B_state;
 boolean ENCODER_A_state_prev = false;
 
-#define BTN_step A0
-#define BTN_out_power A1
+#define BTN_step A3
 #define BTN_lownoisespur A2
-#define BTN_multiplier A3
+#define BTN_out_power A1
+#define BTN_multiplier A0
+
+#define LED_pin 6
 
 uint32_t INTERFACE_action_prev_ms = 0L;
 

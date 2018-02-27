@@ -19,9 +19,11 @@ void OLED_display() {
   myOLED.print(ADF4351_lowNoiseOrSpur_verb[ADF4351_lowNoiseOrSpur_current], 0, 56);
   if (ADF4351_isNeedSetNewConfig) {
     if (OLED_blynk_state) {
-      myOLED.print("SET", 110, 23);
+      myOLED.print("SET", 110, 41);
+      digitalWrite(LED_pin,1);
       OLED_blynk_state = false;
     } else {
+      digitalWrite(LED_pin,0);
       OLED_blynk_state = true;
     }
   }
