@@ -98,7 +98,7 @@ uint8_t INTERFACE_freq_multiplier_variants[3] = {1, 2, 4};
 uint8_t INTERFACE_freq_multiplier_current = 0;
 
 //================================== TIMEMACHINE =================================================================
-uint32_t TIMEMACHINE_prev_3ms = 0L;
+uint32_t TIMEMACHINE_prev_5ms = 0L;
 uint32_t TIMEMACHINE_prev_311ms = 0L;
 
 void setup() {
@@ -110,7 +110,7 @@ void setup() {
 }
 
 void loop() {
-  TIMEMACHINE_loop();
+  TIMEMACHINE_loop();  
 }
 
 

@@ -1,8 +1,8 @@
 void TIMEMACHINE_loop() {
   uint32_t  TIMEMACHINE_currMillis = millis();
-  if ((TIMEMACHINE_currMillis - TIMEMACHINE_prev_3ms) > 3L) {
-    TIMEMACHINE_3ms();
-    TIMEMACHINE_prev_3ms = TIMEMACHINE_currMillis;
+  if ((TIMEMACHINE_currMillis - TIMEMACHINE_prev_5ms) > 5L) {
+    TIMEMACHINE_5ms();
+    TIMEMACHINE_prev_5ms = TIMEMACHINE_currMillis;
   }
   if ((TIMEMACHINE_currMillis - TIMEMACHINE_prev_311ms) > 311L) {
     TIMEMACHINE_311ms();
@@ -11,12 +11,12 @@ void TIMEMACHINE_loop() {
 
 }
 
-void TIMEMACHINE_3ms() {
-  ENCODER_check();
-  BUTTON_check();
+void TIMEMACHINE_5ms() {
+  ENCODER_check();  
 }
 
 void TIMEMACHINE_311ms() {
+  BUTTON_check();
   OLED_display();
 }
 

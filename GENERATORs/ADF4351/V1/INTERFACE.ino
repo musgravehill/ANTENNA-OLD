@@ -42,6 +42,14 @@ void BUTTON_check() {
       INTERFACE_freq_multiplier_next();
     }
   }
+  button_state = digitalRead(ENCODER_button);
+  if (!button_state) {
+    uint32_t  currMillis = millis();
+    if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
+      INTERFACE_action_prev_ms = currMillis;
+      ADF4351_setConfig();
+    }
+  }
 
 }
 
@@ -60,18 +68,9 @@ void ENCODER_init() {
 }
 
 void ENCODER_check() {
-  boolean ENCODER_button_state = digitalRead(ENCODER_button);
-  if (!ENCODER_button_state) {
-    uint32_t  currMillis = millis();
-    if ((currMillis - INTERFACE_action_prev_ms) > 1111L) {
-      INTERFACE_action_prev_ms = currMillis;
-      ADF4351_setConfig();       
-    }
-  }
-
   ENCODER_A_state = digitalRead(ENCODER_A);
-  ENCODER_B_state = digitalRead(ENCODER_B);
   if ((!ENCODER_A_state) && (ENCODER_A_state_prev))  {
+    ENCODER_B_state = digitalRead(ENCODER_B);
     if (ENCODER_B_state) {
       ADF4351_freq_inc();
     }
